@@ -5,63 +5,51 @@
             "description": "Run/Install 3rd party applications",
             "sub": [
                 {
-                    "id": "Management",
-                    "description": "Remote Management tools",
+                    "id": "M00",
+                    "description": "Install Cockpit web-based management tool",
+                    "prompt": "This operation will install Cockpit.\ncockpit cockpit-ws cockpit-system cockpit-storaged\nWould you like to continue?",
+                    "command": [
+                        "see_current_apt update",
+                        "apt_install_wrapper apt -y install cockpit cockpit-ws cockpit-system cockpit-storaged "
+                    ],
+                    "status": "Stable",
+                    "condition": "! check_if_installed cockpit"
+                },
+                {
+                    "id": "Cockpit",
+                    "description": "Manage Cockpit web-based management tool",
+                    "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
                     "sub": [
                         {
-                            "id": "M00",
-                            "description": "Install Cockpit web-based management tool",
-                            "prompt": "This operation will install Cockpit.\ncockpit cockpit-ws cockpit-system cockpit-storaged\nWould you like to continue?",
-                            "command": [
-                                "see_current_apt update",
-                                "apt_install_wrapper apt -y install cockpit cockpit-ws cockpit-system cockpit-storaged "
-                            ],
-                            "status": "Stable",
-                            "condition": "! check_if_installed cockpit"
-                        },
-                        {
-                            "id": "Cockpit",
-                            "description": "Manage Cockpit web-based management tool",
+                            "id": "M01",
+                            "description": "Purge Cockpit web-based management tool",
                             "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
-                            "sub": [
-                                {
-                                    "id": "M01",
-                                    "description": "Purge Cockpit web-based management tool",
-                                    "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
-                                    "command": [
-                                        "apt_install_wrapper apt -y purge cockpit"
-                                    ],
-                                    "status": "Stable",
-                                    "condition": "check_if_installed cockpit"
-                                },
-                                {
-                                    "id": "M02",
-                                    "description": "Start Cockpit Service",
-                                    "command": [
-                                        "sudo systemctl enable --now cockpit.socket | show_infobox "
-                                    ],
-                                    "status": "Stable",
-                                    "doc_link": "",
-                                    "src_reference": "",
-                                    "author": "",
-                                    "condition": "check_if_installed cockpit && ! systemctl is-enabled cockpit.socket > /dev/null 2>&1"
-                                },
-                                {
-                                    "id": "M03",
-                                    "description": "Stop Cockpit Service",
-                                    "command": [
-                                        "systemctl stop cockpit cockpit.socket",
-                                        "systemctl disable cockpit.socket | show_infobox "
-                                    ],
-                                    "status": "Stable",
-                                    "doc_link": "",
-                                    "src_reference": "",
-                                    "author": "",
-                                    "condition": "check_if_installed cockpit && systemctl is-enabled cockpit.socket > /dev/null 2>&1"
-                                }
+                            "command": [
+                                "apt_install_wrapper apt -y purge cockpit"
                             ],
                             "status": "Stable",
                             "condition": "check_if_installed cockpit"
+                        },
+                        {
+                            "id": "M02",
+                            "description": "Start Cockpit Service",
+                            "command": [
+                                "sudo systemctl enable --now cockpit.socket | show_infobox "
+                            ],
+                            "status": "Stable",
+                            "author": "",
+                            "condition": "check_if_installed cockpit && ! systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+                        },
+                        {
+                            "id": "M03",
+                            "description": "Stop Cockpit Service",
+                            "command": [
+                                "systemctl stop cockpit cockpit.socket",
+                                "systemctl disable cockpit.socket | show_infobox "
+                            ],
+                            "status": "Stable",
+                            "author": "",
+                            "condition": "check_if_installed cockpit && systemctl is-enabled cockpit.socket > /dev/null 2>&1"
                         }
                     ]
                 }

@@ -4,13 +4,13 @@
 
 
 module_options+=(
-	["see_cmd_list,author"]="Joey Turner"
-	["see_cmd_list,ref_link"]=""
+	["see_cmd_list,author"]="Tearran"
+	["see_cmd_list,ref_link"]="unused"
 	["see_cmd_list,feature"]="see_cmd_list"
 	["see_cmd_list,desc"]="Generate a Help message for cli commands."
 	["see_cmd_list,example"]="see_cmd_list [catagory]"
-	["see_cmd_list,status"]="review"
-	["see_cmd_list,doc_link"]=""
+	["see_cmd_list,status"]="unused"
+	["see_cmd_list,doc_link"]="unused"
 )
 #
 # See command options
@@ -77,6 +77,34 @@ see_cmd_list() {
 }
 
 module_options+=(
+	["see_use,author"]="Joey Turner"
+	["see_use,ref_link"]=""
+	["see_use,feature"]="see_use"
+	["see_use,desc"]="Show the usage of the functions."
+	["see_use,example"]="see_use"
+	["see_use,status"]="review"
+	["see_use,doc_link"]=""
+)
+#
+# Function to parse the key-pairs  (WIP)
+#
+function see_api_list() {
+	mod_message="Usage: \n\n"
+	# Iterate over the options
+	for key in "${!module_options[@]}"; do
+		# Split the key into function_name and type
+		IFS=',' read -r function_name type <<< "$key"
+		# If the type is 'long', append the option to the help message
+		if [[ "$type" == "feature" ]]; then
+			mod_message+="${module_options["$function_name,feature"]} - ${module_options["$function_name,desc"]}\n"
+			mod_message+="  ${module_options["$function_name,example"]}\n\n"
+		fi
+	done
+
+	echo -e "$mod_message"
+}
+
+module_options+=(
 	["parse_menu_items,author"]="Gunjan Gupta"
 	["parse_menu_items,ref_link"]=""
 	["parse_menu_items,feature"]="parse_menu_items"
@@ -107,13 +135,13 @@ parse_menu_items() {
 }
 
 module_options+=(
-	["generate_top_menu,author"]="Joey Turner"
-	["generate_top_menu,ref_link"]=""
+	["generate_top_menu,author"]="Tearran"
+	["generate_top_menu,ref_link"]="unused"
 	["generate_top_menu,feature"]="generate_top_menu"
 	["generate_top_menu,desc"]="Build the main menu from a object"
 	["generate_top_menu,example"]="generate_top_menu 'json_data'"
-	["generate_top_menu,doc_link"]=""
-	["generate_top_menu,status"]="Active"
+	["generate_top_menu,doc_link"]="unused"
+	["generate_top_menu,status"]="unused"
 )
 #
 # Function to generate the main menu from a JSON object
@@ -143,12 +171,12 @@ generate_top_menu() {
 
 module_options+=(
 	["generate_menu,author"]="Tearran"
-	["generate_menu,ref_link"]=""
+	["generate_menu,ref_link"]="unused"
 	["generate_menu,feature"]="generate_menu"
 	["generate_menu,desc"]="Generate a submenu from a parent_id"
 	["generate_menu,example"]="generate_menu 'parent_id'"
-	["generate_menu,doc_link"]=""
-	["generate_menu,status"]="Active"
+	["generate_menu,doc_link"]="unused"
+	["generate_menu,status"]="unused"
 )
 #
 # Function to generate the submenu
@@ -189,13 +217,13 @@ function generate_menu() {
 }
 
 module_options+=(
-	["execute_command,author"]="Joey Turner"
-	["execute_command,ref_link"]=""
+	["execute_command,author"]="Tearran"
+	["execute_command,ref_link"]="unused"
 	["execute_command,feature"]="execute_command"
 	["execute_command,desc"]="Needed by generate_menu"
-	["execute_command,example"]=""
-	["execute_command,doc_link"]=""
-	["execute_command,status"]="Active"
+	["execute_command,example"]="See generate_menu"
+	["execute_command,doc_link"]="unused"
+	["execute_command,status"]="unused"
 )
 #
 # Function to execute the command
@@ -232,13 +260,13 @@ function execute_command() {
 }
 
 module_options+=(
-	["show_message,author"]="Joey Turner"
-	["show_message,ref_link"]=""
+	["show_message,author"]="Tearran"
+	["show_message,ref_link"]="unused"
 	["show_message,feature"]="show_message"
 	["show_message,desc"]="Display a message box"
 	["show_message,example"]="show_message <<< 'hello world' "
-	["show_message,doc_link"]=""
-	["show_message,status"]="Active"
+	["show_message,doc_link"]="unused"
+	["show_message,status"]="unused"
 )
 #
 # Function to display a message box
@@ -257,13 +285,13 @@ function show_message() {
 }
 
 module_options+=(
-	["show_infobox,author"]="Joey Turner"
-	["show_infobox,ref_link"]=""
+	["show_infobox,author"]="Tearran"
+	["show_infobox,ref_link"]="unused"
 	["show_infobox,feature"]="show_infobox"
 	["show_infobox,desc"]="pipeline strings to an infobox "
 	["show_infobox,example"]="show_infobox <<< 'hello world' ; "
-	["show_infobox,doc_link"]=""
-	["show_infobox,status"]="Active"
+	["show_infobox,doc_link"]="unused"
+	["show_infobox,status"]="unused"
 )
 #
 # Function to display an infobox with a message
@@ -294,13 +322,13 @@ function show_infobox() {
 }
 
 module_options+=(
-	["show_menu,author"]="Joey Turner"
-	["show_menu,ref_link"]=""
+	["show_menu,author"]="Tearran"
+	["show_menu,ref_link"]="unused"
 	["show_menu,feature"]="show_menu"
 	["show_menu,desc"]="Display a menu from pipe"
 	["show_menu,example"]="show_menu <<< armbianmonitor -h  ; "
-	["show_menu,doc_link"]=""
-	["show_menu,status"]="Active"
+	["show_menu,doc_link"]="unused"
+	["show_menu,status"]="unused"
 )
 #
 #
@@ -331,13 +359,13 @@ show_menu() {
 }
 
 menu_options+=(
-	["get_user_continue,author"]="Joey Turner"
-	["get_user_continue,ref_link"]=""
+	["get_user_continue,author"]="Tearran"
+	["get_user_continue,ref_link"]="unused"
 	["get_user_continue,feature"]="process_input"
 	["get_user_continue,desc"]="used to process the user's choice paired with get_user_continue"
 	["get_user_continue,example"]="get_user_continue 'Do you wish to continue?' process_input"
-	["get_user_continue,status"]="Active"
-	["get_user_continue,doc_link"]=""
+	["get_user_continue,status"]="unused"
+	["get_user_continue,doc_link"]="unused"
 )
 #
 # Function to process the user's choice paired with get_user_continue
@@ -350,13 +378,13 @@ function process_input() {
 }
 
 module_options+=(
-	["get_user_continue_secure,author"]="Joey Turner"
-	["get_user_continue_secure,ref_link"]=""
+	["get_user_continue_secure,author"]="Tearran"
+	["get_user_continue_secure,ref_link"]="unused"
 	["get_user_continue_secure,feature"]="get_user_continue"
 	["get_user_continue_secure,desc"]="Yes/no to continue"
 	["get_user_continue_secure,example"]="get_user_continue '<continue. message>' process_input"
-	["get_user_continue_secure,doc_link"]=""
-	["get_user_continue_secure,status"]="Active"
+	["get_user_continue_secure,doc_link"]="unused"
+	["get_user_continue_secure,status"]="unused"
 )
 #
 # Secure version of get_user_continue
@@ -391,13 +419,13 @@ function get_user_continue() {
 
 
 module_options+=(
-	["sanitize_input,author"]=""
-	["sanitize_input,ref_link"]=""
+	["sanitize_input,author"]="Tearran"
+	["sanitize_input,ref_link"]="unused"
 	["sanitize_input,feature"]="sanitize_input"
 	["sanitize_input,desc"]="sanitize input cli"
 	["sanitize_input,example"]="sanitize_input"
-	["sanitize_input,status"]="Pending Review"
-	["sanitize_input,doc_link"]=""
+	["sanitize_input,status"]="unused"
+	["sanitize_input,doc_link"]="unused"
 )
 #
 # sanitize input cli

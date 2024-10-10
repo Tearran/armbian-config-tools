@@ -1,28 +1,14 @@
 #!/bin/bash
 
 tput init
-#
-# Language-based variable assignment for script directory path
-# This serves as a Rosetta Stone for developers,
-# allowing them to use the variable name they are most comfortable with.
 
 # allows CTRL c to exit
 trap "exit" INT TERM
 
-# Get the script directory
 SCRIPT_DIR="$(dirname "$0")"
-script_dir="$SCRIPT_DIR"
-
-# Define the lib directory one level up from the script directory
 LIB_DIR="$SCRIPT_DIR/../lib/armbian-config"
-lib_dir="$LIB_DIR"
-
 DOC_DIR="$SCRIPT_DIR/../share/doc/armbian-config"
-
 JSON_FILE="$LIB_DIR/config.jobs.json"
-
-json_file="$JSON_FILE"
-json_data="$JSON_DATA"
 
 JSON_DATA=$(jq '
     walk(
@@ -40,9 +26,10 @@ JSON_DATA=$(jq '
     )
 ' "$JSON_FILE")
 
-#
+
 # 'whiptail' is a simple dialog box utility that works well with Bash. It doesn't have all the features of some other dialog box utilities, but it does everything we need for this script.
 DIALOG="whiptail"
+#DIALOG="dialog"
 #
 # Prepare the module options array
 declare -A module_options
@@ -55,18 +42,25 @@ source "$LIB_DIR/config.interface.sh"
 source "$LIB_DIR/config.functions.sh"
 source "$LIB_DIR/config.runtime.sh"
 
+# Function to check for sudo and re-execute the script with sudo if necessary
+check_sudo() {
+    if [[ $EUID != 0 ]]; then
+        exec sudo -E "$0" "$@"
+        exit 0
+    fi
+}
+
 case "$1" in
 "--help")
+    if [[ -n "$2" ]]; then
+        see_cmd_list "$2"
+        echo ""
+        exit 0
+    fi
 
-	if [[ -n "$2" ]]; then
-		see_cmd_list "$2"
-		echo ""
-		exit 0
-	fi
-
-	echo "Usage:  armbian-configng --[option]
+    echo "Usage:  armbian-configng --[option]
      Options:
-     --help [catagory]   Use [catagory] to filter specific menu options.
+     --help [category]   Use [category] to filter specific menu options.
      --cmd  [option]     Run a command from the menu (simple)
      --api  [option]     Run a helper command        (advanced)
      --doc               Generate the README.md file 
@@ -76,53 +70,47 @@ case "$1" in
      armbian-configng --cmd help 
      armbian-configng --api help
 "
-	exit 0
-	;;
+    exit 0
+    ;;
 "--cmd")
-	INPUTMODE="cmd"
-	if [[ $EUID != 0 ]]; then
-		exec sudo -E "$0" "$@"
-		exit 0
-	fi
+    INPUTMODE="cmd"
+    check_sudo "$@"
 
-	shift
-	if [[ -z "$1" || "$1" == "help" ]]; then
-		see_cmd_list
-		exit 0
-	fi
+    shift
+    if [[ -z "$1" || "$1" == "help" ]]; then
+        see_cmd_list
+        exit 0
+    fi
 
-	args=$(sanitize_input "$@")
-	execute_command "$args"
-	exit 0
-	;;
+    args=$(sanitize_input "$@")
+    execute_command "$args"
+    exit 0
+    ;;
 "--api")
-	if [[ $EUID != 0 ]]; then
-		exec sudo -E "$0" "$@"
-		exit 0
-	fi
-	shift
-	if [[ -z "$1" || "$1" == "help" ]]; then
-		see_use
-		exit 0
-	fi
-	option="$1"
-	shift
-	args=$(sanitize_input "$@")
-	"$option" "$args"
-	exit 0
-	;;
-*)
-	if [[ $EUID != 0 ]]; then
-		exec sudo -E "$0" "$@"
-		exit 0
-	fi
+    check_sudo "$@"
+    
+    shift
+    if [[ -z "$1" || "$1" == "help" ]]; then
+        see_api_list
+        exit 0
+    fi
 
-	;;
+    option="$1"
+    shift
+    args=$(sanitize_input "$@")
+    "$option" "$args"
+    exit 0
+    ;;
+*)
+    check_sudo "$@"
+    ;;
 esac
+
 
 #
 # Generate the top menu with the modified Object data
-
+generate_menu "Software"
+exit 0
 generate_top_menu "$JSON_DATA"
 
 
