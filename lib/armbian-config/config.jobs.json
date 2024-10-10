@@ -1,0 +1,328 @@
+{
+    "menu": [
+        {
+            "id": "System",
+            "description": "System wide and admin settings",
+            "sub": [
+                {
+                    "id": "S01",
+                    "description": "Enable Armbian kernel/firmware upgrades",
+                    "prompt": "This will enable Armbian kernel upgrades?\nWould you like to continue?",
+                    "command": [
+                        "armbian_fw_manipulate unhold"
+                    ],
+                    "status": "Disabled",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "[[ -n \"$(apt-mark showhold)\" ]]"
+                },
+                {
+                    "id": "S02",
+                    "description": "Disable Armbian kernel upgrades",
+                    "prompt": "Disable Armbian kernel/firmware upgrades\nWould you like to continue?",
+                    "command": [
+                        "armbian_fw_manipulate hold"
+                    ],
+                    "status": "Disabled",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": "",
+                    "condition": "[[ -z \"$(apt-mark showhold)\" ]]"
+                },
+                {
+                    "id": "S03",
+                    "description": "Edit the boot environment",
+                    "prompt": "This will open /boot/armbianEnv.txt file to edit\nCTRL+S to save\nCTLR+X to exit\nwould you like to continue?",
+                    "command": [
+                        "nano /boot/armbianEnv.txt"
+                    ],
+                    "status": "",
+                    "doc_link": "",
+                    "src_reference": "",
+                    "author": ""
+                },
+                {
+                    "id": "S04",
+                    "description": "Install Linux headers",
+                    "command": [
+                        "Headers_install"
+                    ],
+                    "status": "Disabled",
+                    "doc_link": "https://github.com/armbian/config/wiki#System",
+                    "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
+                    "author": "https://github.com/Tearran",
+                    "condition": "! are_headers_installed"
+                },
+                {
+                    "id": "S05",
+                    "description": "Remove Linux headers",
+                    "command": [
+                        "Headers_remove"
+                    ],
+                    "status": "Disabled",
+                    "doc_link": "https://github.com/armbian/config/wiki#System",
+                    "src_reference": "https://github.com/armbian/config/blob/master/debian-config-jobs#L160",
+                    "author": "https://github.com/Tearran",
+                    "condition": "are_headers_installed"
+                },
+                {
+                    "id": "S06",
+                    "description": "Install to internal storage",
+                    "command": [
+                        "armbian-install",
+                        "tput lines | xargs -I{} seq {} | xargs -I{} echo"
+                    ],
+                    "status": "Stable",
+                    "doc_link": "https://github.com/armbian/config/wiki#System",
+                    "src_reference": "",
+                    "author": "https://github.com/igorpecovnik",
+                    "condition": "[[ -n $(ls /sbin/armbian-install) ]]"
+                },
+                {
+                    "id": "SSH",
+                    "description": "Manage SSH login options",
+                    "status": "Disabled",
+                    "sub": [
+                        {
+                            "id": "S07",
+                            "description": "Disable root login",
+                            "command": [
+                                "sed -i \"s|^#\\?PermitRootLogin.*|PermitRootLogin no|\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "w",
+                            "condition": "grep -q '^PermitRootLogin yes'  /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S08",
+                            "description": "Enable root login",
+                            "command": [
+                                "sed -i \"s/^#\\?PermitRootLogin.*/PermitRootLogin yes/\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^PermitRootLogin no' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S09",
+                            "description": "Disable password login",
+                            "command": [
+                                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication no/\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q 'PasswordAuthentication yes' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S10",
+                            "description": "Enable password login",
+                            "command": [
+                                "sed -i \"s/^#\\?PasswordAuthentication.*/PasswordAuthentication yes/\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q 'PasswordAuthentication no' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S11",
+                            "description": "Disable Public key authentication login",
+                            "command": [
+                                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication no/\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q 'PubkeyAuthentication yes' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S12",
+                            "description": "Enable Public key authentication login",
+                            "command": [
+                                "sed -i \"s/^#\\?PubkeyAuthentication.*/PubkeyAuthentication yes/\" /etc/ssh/sshd_config",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q 'PubkeyAuthentication no' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S13",
+                            "description": "Disable OTP authentication",
+                            "command": [
+                                "clear",
+                                "! check_if_installed libpam-google-authenticator && ! check_if_installed qrencode || debconf-apt-progress -- apt-get -y purge libpam-google-authenticator qrencode",
+                                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication no/\" /etc/ssh/sshd_config || sed -i \"0,/KbdInteractiveAuthentication/s//ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config",
+                                "sed -i '/^auth required pam_google_authenticator.so nullok/ d' /etc/pam.d/sshd",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q 'ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S14",
+                            "description": "Enable OTP authentication",
+                            "command": [
+                                "check_if_installed libpam-google-authenticator || debconf-apt-progress -- apt-get -y install libpam-google-authenticator",
+                                "check_if_installed qrencode || debconf-apt-progress -- apt-get -y install qrencode",
+                                "sed -i \"s/^#\\?ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/\" /etc/ssh/sshd_config",
+                                "sed -i $'/KbdInteractiveAuthentication/{iChallengeResponseAuthentication yes\\n:a;n;ba}' /etc/ssh/sshd_config || sed -n -i '/password updating/{p;:a;N;/@include common-password/!ba;s/.*\\n/auth required pam_google_authenticator.so nullok\\nauth required pam_permit.so\\n/};p' /etc/pam.d/sshd",
+                                "[ ! -f /root/.google_authenticator ] && qr_code generate",
+                                "systemctl restart sshd.service 2>/dev/null | systemctl restart ssh.service 2>/dev/null"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "! check_if_installed libpam-google-authenticator || ! check_if_installed qrencode || grep -q '^ChallengeResponseAuthentication no' /etc/ssh/sshd_config || ! grep -q 'ChallengeResponseAuthentication' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S15",
+                            "description": "Generate new OTP authentication QR code",
+                            "command": [
+                                "qr_code generate"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S16",
+                            "description": "Show OTP authentication QR code",
+                            "command": [
+                                "qr_code"
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "Igor Pecovnik",
+                            "condition": "grep -q '^ChallengeResponseAuthentication yes' /etc/ssh/sshd_config && [ -f /root/.google_authenticator ]"
+                        },
+                        {
+                            "id": "S30",
+                            "description": "Disable last login banner",
+                            "command": [
+                                "sed -i \"s/^#\\?PrintLastLog.*/PrintLastLog no/\" /etc/ssh/sshd_config",
+                                "systemctl restart ssh.service "
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^PrintLastLog yes' /etc/ssh/sshd_config"
+                        },
+                        {
+                            "id": "S31",
+                            "description": "Enable last login banner",
+                            "command": [
+                                "sed -i \"s/^#\\?PrintLastLog.*/PrintLastLog yes/\" /etc/ssh/sshd_config",
+                                "systemctl restart ssh.service "
+                            ],
+                            "status": "",
+                            "doc_link": "",
+                            "src_reference": "",
+                            "author": "",
+                            "condition": "grep -q '^PrintLastLog no' /etc/ssh/sshd_config"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Software",
+            "description": "Run/Install 3rd party applications",
+            "sub": [
+                {
+                    "id": "Management",
+                    "description": "Remote Management tools",
+                    "sub": [
+                        {
+                            "id": "M00",
+                            "description": "Install Cockpit web-based management tool",
+                            "prompt": "This operation will install Cockpit.\ncockpit cockpit-ws cockpit-system cockpit-storaged\nWould you like to continue?",
+                            "command": [
+                                "see_current_apt update",
+                                "apt_install_wrapper apt -y install cockpit cockpit-ws cockpit-system cockpit-storaged "
+                            ],
+                            "status": "Stable",
+                            "condition": "! check_if_installed cockpit"
+                        },
+                        {
+                            "id": "Cockpit",
+                            "description": "Manage Cockpit web-based management tool",
+                            "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
+                            "sub": [
+                                {
+                                    "id": "M01",
+                                    "description": "Purge Cockpit web-based management tool",
+                                    "prompt": "This operation will purge Cockpit.\nWould you like to continue?",
+                                    "command": [
+                                        "apt_install_wrapper apt -y purge cockpit"
+                                    ],
+                                    "status": "Stable",
+                                    "condition": "check_if_installed cockpit"
+                                },
+                                {
+                                    "id": "M02",
+                                    "description": "Start Cockpit Service",
+                                    "command": [
+                                        "sudo systemctl enable --now cockpit.socket | show_infobox "
+                                    ],
+                                    "status": "Stable",
+                                    "doc_link": "",
+                                    "src_reference": "",
+                                    "author": "",
+                                    "condition": "check_if_installed cockpit && ! systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+                                },
+                                {
+                                    "id": "M03",
+                                    "description": "Stop Cockpit Service",
+                                    "command": [
+                                        "systemctl stop cockpit cockpit.socket",
+                                        "systemctl disable cockpit.socket | show_infobox "
+                                    ],
+                                    "status": "Stable",
+                                    "doc_link": "",
+                                    "src_reference": "",
+                                    "author": "",
+                                    "condition": "check_if_installed cockpit && systemctl is-enabled cockpit.socket > /dev/null 2>&1"
+                                }
+                            ],
+                            "status": "Stable",
+                            "condition": "check_if_installed cockpit"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "Help",
+            "description": "About this app",
+            "command": [
+                "show_message <<< \"This app is to help execute procedures to configure your system\n\nSome options may not work on manually modified systems\""
+            ],
+            "status": "stable",
+            "doc_link": "",
+            "src_reference": "",
+            "author": ""
+        }
+    ]
+}
