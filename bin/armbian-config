@@ -109,8 +109,8 @@ esac
 
 #
 # Generate the top menu with the modified Object data
-generate_menu "Software"
-exit 0
+#generate_menu "Software"
+
 generate_top_menu "$JSON_DATA"
 
 
